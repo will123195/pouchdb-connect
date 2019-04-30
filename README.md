@@ -12,29 +12,29 @@ npm i pouchdb-connect
 
 ```js
 import React, { Component } from 'react'
+import PouchDB from 'pouchdb'
 import connect from 'pouchdb-connect'
-import Book from './Book'
-import { getBook } from './bookService'
 
-class BookContainer extends Component { 
+const db = new PouchDB('books')
+
+class Book extends Component { 
+  // get the lastest revision of the book
+  getData = async () => db.get(this.props.id)
   
-  // getData() sets this.data if onChangeShouldUpdate returns true
-  getData = async () => ({
-    book: await getCount()
-  })
-  
-  // determines if the change requires a re-render
-  onChangeShouldUpdate = async change => {
-    if (change.isInsert) return true
-    if (change.affects({ type: 'book' })) return true
-    return false
+  // re-render when the book is modified
+  onChangeShouldUpdate = async event => {
+    const { _id } = this.data
+    return !!event.affects({ _id }))
   }
 
   render() {
-    return <Book book={this.data.book} />
+    return <div>{this.data.title}</div>
   }
 }
 
-export default connect(BookContainer)
+export default connect(db)(Book)
 ```
 
+```jsx
+<Book id={123} />
+```

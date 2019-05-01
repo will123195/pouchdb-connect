@@ -7,7 +7,6 @@ PouchDB Connect for React
 - Global state for your React app stored in PouchDB
 - Listens for database changes and re-renders "connected" components
 - Not Redux: no reducers, no immutable store, no dispatching actions, no middleware
-- No dependencies
 
 ## Install
 
@@ -31,7 +30,7 @@ class Book extends Component {
   // re-render when the book is modified
   onChangeShouldUpdate = async change => {
     const { _id } = this.data
-    return !!change.affects({ _id }))
+    return !!change.affects({ _id })
   }
 
   render() {

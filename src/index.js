@@ -13,7 +13,7 @@ function getWrappedComponent(ComponentClass, db) {
     Component.call(this)
     this.data = {}
     db.components.push(this)
-    this.onDbChange()
+    this.onDbChange() //.catch(console.log)
   }
   WrappedComponent.prototype = new Component()
   WrappedComponent.prototype.constructor = WrappedComponent

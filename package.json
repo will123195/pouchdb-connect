@@ -2,7 +2,7 @@
   "name": "pouchdb-connect",
   "version": "1.0.2",
   "description": "PouchDB Connect for React",
-  "main": "bundle/pouchdb-connect.min.js",
+  "main": "bundle/index.js",
   "module": "src/index.js",
   "scripts": {
     "build": "npx babel src/index.js --out-file bundle/index.js",

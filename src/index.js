@@ -1,21 +1,32 @@
-function getDecoratedComponent(Component, db) {
-  return class DecoratedComponent extends Component {
-    constructor() {
-      super()
-      this.data = {}
-      db.components.push(this)
-      this.onDbChange()
-    }
-    async onDbChange(change) {
-      if (change && this.onChangeShouldUpdate) {
-        const shouldRender = await this.onChangeShouldUpdate(change)
-        if (!shouldRender) return
-      }
-      if (!this.getData) return
-      this.data = await this.getData()
-      this.setState({ state: this.state })
-    }
+function createFunctionFromClass(ComponentClass) {
+  function FunctionalComponent() {
+    return Reflect.construct(ComponentClass, arguments, this.constructor)
   }
+  Reflect.setPrototypeOf(FunctionalComponent.prototype, ComponentClass.prototype)
+  Reflect.setPrototypeOf(FunctionalComponent, ComponentClass)
+  return FunctionalComponent
+}
+
+function getWrappedComponent(ComponentClass, db) {
+  const Component = createFunctionFromClass(ComponentClass)
+  function WrappedComponent() {
+    Component.call(this)
+    this.data = {}
+    db.components.push(this)
+    this.onDbChange()
+  }
+  WrappedComponent.prototype = new Component()
+  WrappedComponent.prototype.constructor = WrappedComponent
+  WrappedComponent.prototype.onDbChange = async function (change) {
+    if (change && this.onChangeShouldUpdate) {
+      const shouldRender = await this.onChangeShouldUpdate(change)
+      if (!shouldRender) return
+    }
+    if (!this.getData) return
+    this.data = await this.getData()
+    this.setState({ state: this.state })    
+  }
+  return WrappedComponent
 }
 
 function decorateDb(db) {
@@ -60,5 +71,5 @@ function decorateDb(db) {
 
 export default function connect(db) {
   decorateDb(db)
-  return Component => getDecoratedComponent(Component, db)
+  return Component => getWrappedComponent(Component, db)
 }

@@ -1,6 +1,6 @@
 {
   "name": "pouchdb-connect",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "PouchDB Connect for React",
   "main": "bundle/pouchdb-connect.min.js",
   "module": "src/index.js",

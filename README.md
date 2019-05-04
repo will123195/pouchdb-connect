@@ -26,25 +26,25 @@ import connect from 'pouchdb-connect'
 const db = new PouchDB('books')
 const withDb = connect(db)
 
-function Book({ title, price }) { 
+function Book({ id, title, price }) { 
   return <div>{title} {price}</div>
 }
 
 // get the book from the db
-async function getData(props) {
-  return db.get(props.title).catch(console.log)
+async function getData({ id }) {
+  return db.get(id).catch(console.log)
 }
 
 // re-render only when this specific book has been modified
-function shouldUpdate(changeEvent, props) {
-  return changeEvent.affects({ _id: props.title })
+function shouldUpdate(changeEvent, { id }) {
+  return changeEvent.affects({ _id: id })
 }
 
 export default withDb(getData, shouldUpdate)(Book)
 ```
 
 ```jsx
-<Book title='Ready Player One' />
+<Book id='1' />
 ```
 
 ## API

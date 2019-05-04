@@ -59,13 +59,13 @@ The PouchDB object
 
 ### `getData( props )`
 
-This function must return an object which will be assigned into the component's `props` to re-render the component. 
+This async function must return an object which will be assigned into the component's `props` to re-render the component. 
 
 - `props` {object} - the current `props` of the component
 
 ### `shouldUpdate( changeEvent, props )`
 
-This async function is called after every change to the db. If the function returns `true`, then the component will call `getData()` then `render()`.
+This function is called after every change to the db. If the function returns `true`, then the component will call `getData()` then `render()`.
 
 - `changeEvent` {object} - the PouchDB change event which is decorated with a few helpful properties:
 

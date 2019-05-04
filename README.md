@@ -65,7 +65,7 @@ This async function must return an object which will be assigned into the compon
 
 ### `shouldUpdate( changeEvent, props )`
 
-This function is called after every change to the db. If the function returns `true`, then the component will call `getData()` then `render()`.
+This function is called after every change to the db. If the function returns `true`, then the component will call `getData()`, assign the data to `props`, then re-render.
 
 - `changeEvent` {object} - the PouchDB change event which is decorated with a few helpful properties:
 
@@ -73,7 +73,7 @@ This function is called after every change to the db. If the function returns `t
     - `changeEvent.affects( selector )` {function} returns a boolean to indicate if the db change has affected the results of the given selector 
         - `selector` {object} see [mango query selectors](https://pouchdb.com/guides/mango-queries.html#query-language)
 
-- `props` {object} - the currently `props` of the component
+- `props` {object} - the current `props` of the component
 
 ### `MyComponent`
 

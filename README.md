@@ -2,11 +2,13 @@
 
 PouchDB Connect for React
 
+[![Build Status](https://travis-ci.org/will123195/pouchdb-connect.svg?branch=master)](https://travis-ci.org/will123195/pouchdb-connect)
+
 ## Features
 
 - Global state for your React app stored in PouchDB
-- Listens for database changes and re-renders "connected" components
-- Not Redux: no reducers, no immutable store, no dispatching actions, no middleware
+- No dependencies
+- Not Redux! No provider, no reducers, no immutable store, no dispatching actions, no middleware, async-friendly
 
 ## Install
 
@@ -17,46 +19,67 @@ npm i pouchdb-connect
 ## Usage
 
 ```js
-import React, { Component } from 'react'
+import React from 'react'
 import PouchDB from 'pouchdb'
 import connect from 'pouchdb-connect'
 
 const db = new PouchDB('books')
+const withDb = connect(db)
 
-class Book extends Component { 
-  // get the lastest revision of the book
-  getData = async () => db.get(this.props.id)
-  
-  // re-render when the book is modified
-  onChangeShouldUpdate = async change => {
-    const { _id } = this.data
-    return !!change.affects({ _id })
-  }
-
-  render() {
-    return <div>{this.data.title}</div>
-  }
+function Book({ title, price }) { 
+  return <div>{title} {price}</div>
 }
 
-// make this a "connected" component
-export default connect(db)(Book)
+// get the book from the db
+async function getData(props) {
+  return db.get(props.title).catch(console.log)
+}
+
+// re-render only when this specific book has been modified
+function shouldUpdate(changeEvent, props) {
+  return changeEvent.affects({ _id: props.title })
+}
+
+export default withDb(getData, shouldUpdate)(Book)
 ```
 
 ```jsx
-<Book id={123} />
+<Book title='Ready Player One' />
 ```
 
 ## API
 
-### `getData()`
+## `connect( db )( getData, shouldUpdate )( MyComponent )`
 
-This async function's return value is assigned to `this.data`. 
+Creates a [higher-order component](https://reactjs.org/docs/higher-order-components.html) that subscribes your component to db changes and conditionally re-renders the component.
 
-### `onChangeShouldUpdate( change )`
+### `db`
+
+The PouchDB object
+
+### `getData( props )`
+
+This function must return an object which will be assigned into the component's `props` to re-render the component. 
+
+- `props` {object} - the current `props` of the component
+
+### `shouldUpdate( changeEvent, props )`
 
 This async function is called after every change to the db. If the function returns `true`, then the component will call `getData()` then `render()`.
 
-- `change` {object} - the db change event
+- `changeEvent` {object} - the PouchDB change event which is decorated with a few helpful properties:
 
-    - `change.isInsert` {boolean} indicates if a new document was just created
-    - `change.affects(selector)` {boolean} indicates if the db change would affect the results of the specified [mango query selector](https://pouchdb.com/guides/mango-queries.html#query-language)
+    - `changeEvent.isInsert` {boolean} indicates if a new document was just created
+    - `changeEvent.affects( selector )` {function} returns a boolean to indicate if the db change has affected the results of the given selector 
+        - `selector` {object} see [mango query selectors](https://pouchdb.com/guides/mango-queries.html#query-language)
+
+- `props` {object} - the currently `props` of the component
+
+### `MyComponent`
+
+Any React Component
+
+
+## You may also like
+
+- [react-pouchdb](https://github.com/ArnoSaine/react-pouchdb)

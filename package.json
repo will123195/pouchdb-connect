@@ -2,11 +2,9 @@
   "name": "pouchdb-connect",
   "version": "1.0.3",
   "description": "PouchDB Connect for React",
-  "main": "bundle/index.js",
-  "module": "src/index.js",
+  "module": "pouchdb-connect.js",
   "scripts": {
-    "build": "npx babel src/index.js --out-file bundle/index.js",
-    "test": "npm run build && node test"
+    "test": "jest --bail --runInBand"
   },
   "repository": {
     "type": "git",
@@ -19,14 +17,16 @@
   },
   "homepage": "https://github.com/will123195/pouchdb-connect#readme",
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.4",
     "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
-    "babel-plugin-add-module-exports": "^1.0.2",
-    "pouchdb": "^7.0.0"
-  },
-  "dependencies": {
-    "@babel/runtime": "^7.4.4"
+    "@babel/preset-react": "^7.0.0",
+    "@babel/runtime": "^7.4.4",
+    "babel-jest": "^24.7.1",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.12.1",
+    "jest": "^24.7.1",
+    "pouchdb": "^7.0.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   }
 }

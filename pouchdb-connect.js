@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 
 export default function connect(db) {
   const changes = db.changes({
@@ -8,10 +8,9 @@ export default function connect(db) {
   })
   return (getData, shouldUpdate) => {
     return Component => {
-      return props => {
-        const [data, setData] = useState()
-        useEffect(() => {
-          getData(props).then(setData)
+      return class extends React.Component {
+        componentDidMount() {
+          getData(this.props).then(data => this.setState(data))
           changes.on('change', async change => {
             const { doc } = change 
             change.isInsert = doc._rev.substring(0, 2) === '1-'
@@ -30,16 +29,21 @@ export default function connect(db) {
                 if (typeof value === 'object') return true
                 if (change.doc[property] === value) return true
                 if (change.previousDoc && change.previousDoc[property] === value) return true
+                return false
               })
               return isAffected
             }
-            shouldUpdate(change, props) && getData(props).then(setData)
+            shouldUpdate(change, this.state) && getData(this.props).then(data => this.setState(data))
           })
-          return () => {
-            changes.cancel()
-          }
-        }, [])
-        return React.createElement(Component, { ...props, ...data })
+        }
+
+        componenetDidUnmount() {
+          changes.cancel()
+        }
+
+        render() {
+          return <Component {...this.props} {...this.state} />
+        }
       }
     }
   }

@@ -42,7 +42,7 @@ export default function connect(db) {
         }
 
         render() {
-          return <Component {...this.props} {...this.state} />
+          return React.createElement(Component, { ...this.props, ...this.state })
         }
       }
     }
